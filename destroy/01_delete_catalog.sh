@@ -1,2 +1,2 @@
-vcd catalog delete iso rhcos.iso
-vcd catalog delete iso
+vcd catalog delete -y iso rhcos.iso
+vcd catalog delete -y iso
