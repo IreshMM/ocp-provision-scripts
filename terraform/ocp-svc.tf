@@ -15,4 +15,10 @@ resource "vcd_vapp_vm" "ocp_svc" {
     iops             = 0
     storage_profile  = "Standard"
   }
+
+  customization {
+    initscript = "echo hello > a"
+    auto_generate_password = false
+    admin_password = "admin"
+  }
 }
