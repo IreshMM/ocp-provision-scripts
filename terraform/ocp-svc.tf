@@ -1,6 +1,7 @@
 resource "vcd_vapp_vm" "ocp_svc" {
   vapp_name     = var.vapp
   name          = "ocp-svc"
+  computer_name = "ocp-svc"
   catalog_name  = "Public Catalog"
   template_name = "CentOS-8-Template-Official"
   memory        = 1024 * 6
@@ -17,7 +18,11 @@ resource "vcd_vapp_vm" "ocp_svc" {
   }
 
   customization {
-    initscript = "echo hello > a"
+    initscript = <<-EOF
+                    #!/bin/bash
+                    cd
+                    echo hellofriend > b
+                    EOF
     auto_generate_password = false
     admin_password = "admin"
   }
