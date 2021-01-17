@@ -1,13 +1,18 @@
-#!/bin/bash
+#!/bin/bash -x
 
-vcd vapp create -d 'VM Cluster for OCP cluster' ocp-cluster
+if [ -z "$1" ]; then
+  echo "Please enter the cluster name"
+  exit 1
+fi
+
+vcd vapp create -d 'VM Cluster for OCP cluster' "$1"
 vcd network isolated create \
               -g 192.168.22.1 \
               -n 255.255.255.0 \
               --dhcp-disabled \
               ocp.lan
 
-vcd vapp network create-ovdc-network ocp-cluster ocp.lan
+vcd vapp network create-ovdc-network "$1" ocp.lan
 
 # $1 -> Cluster name
 # $2 -> VM name
@@ -43,14 +48,14 @@ vcd vm add-nic \
             "$2"
 }
 
-create_vm "ocp-cluster" "ocp-bootstrap" 6 6 40 "iso rhcos.iso"
+create_vm "$1" "ocp-bootstrap" 6 6 40 "iso rhcos.iso"
 
 # Create control plane
 for instance in {1..3}; do
-  create_vm "ocp-cluster" "ocp-cp-${instance}" 4 8 50 "iso rhcos.iso"
+  create_vm "$1" "ocp-cp-${instance}" 4 8 50 "iso rhcos.iso"
 done
 
 # Create compute nodes
 for instance in {1..2}; do
-  create_vm "ocp-cluster" "ocp-w-${instance}" 4 8 50 "iso rhcos.iso"
+  create_vm "$1" "ocp-w-${instance}" 4 8 50 "iso rhcos.iso"
 done

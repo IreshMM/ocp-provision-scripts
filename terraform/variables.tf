@@ -28,3 +28,6 @@ variable "vcd_allow_unverified_ssl" {
     type = bool
     default =  false
 }
+
+variable "vapp" {
+}

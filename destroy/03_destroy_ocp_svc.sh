@@ -1,8 +1,14 @@
 #!/bin/bash
-vcd vm reset ocp-cluster ocp-svc
 
-vcd vm undeploy ocp-cluster ocp-svc
+if [ -z "$1" ]; then
+  echo "Please enter the cluster name"
+  exit 1
+fi
 
-vcd vm delete ocp-cluster ocp-svc
+vcd vm reset "$1" ocp-svc
 
-vcd vapp network delete ocp-cluster natnet
+vcd vm undeploy "$1" ocp-svc
+
+vcd vm delete "$1" ocp-svc
+
+vcd vapp network delete "$1" natnet

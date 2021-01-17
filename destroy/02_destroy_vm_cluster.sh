@@ -1,6 +1,11 @@
 #!/bin/bash
 
-vcd vapp delete -y -f ocp-cluster
+if [ -z "$1" ]; then
+  echo "Please enter the cluster name"
+  exit 1
+fi
+
+vcd vapp delete -y -f "$1"
 
 vcd network isolated delete -y ocp.lan
 

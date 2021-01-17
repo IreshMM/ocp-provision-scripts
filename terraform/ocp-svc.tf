@@ -1,5 +1,5 @@
 resource "vcd_vapp_vm" "ocp_svc" {
-  vapp_name     = "ocp-cluster"
+  vapp_name     = var.vapp
   name          = "ocp-svc"
   catalog_name  = "Public Catalog"
   template_name = "CentOS-8-Template-Official"
