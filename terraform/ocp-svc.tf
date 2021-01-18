@@ -20,10 +20,8 @@ resource "vcd_vapp_vm" "ocp_svc" {
   customization {
     initscript = <<-EOF
                     #!/bin/bash
-                    cd
-                    echo hellofriend > b
+                    mkdir -p /root/.ssh
+                    echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCu4bcm6NNupeqvYgQ4ZSf8hixom8vuHI8Rga5zbabBRI59y0Rg+29oJyVb39qq7DDCF4JLzO0adC+stdrKpCK7dHOc1wjRMnQUaQwVoD+YQ+yVSEMaTHyBJ7nozQqQVi8h/OUH22jDsSXsyWedST441pIPF4rlV/xABH6oBL25woGuUUMgTQ6cCIxz1iwYmRwRNtCsf28sLlM1Q1bBKc8Cj19Nzkokbbg5G1Z3V3bkbcYiH+UH9Z/JPfhTFyfe0abd6hvLC9JIFzC0oZrk2YmRba8UR6reRQHUBKf6BxRr8KOfhkjFbxra36bSuUM/3dbG5t992xGfO+d+2W8iqzxcYin8A9u5/OjnwSVU5mxFJLHh1hf/MnowS7LSE6r17pTOVoA/FIDPvcfJphK+t0aMqxz7eHY3zusHAtghTe+4PJxoFKmTcqbhnJq1jIOlOwv4/SrSwgkihOmSBbY9TIOUdlk9Yhfv5DWjMJyOAcWv32yyFiqrN+j6rCjTHaP+Th8= iresh@workstation" >> /root/.ssh/authorized_keys
                     EOF
-    auto_generate_password = false
-    admin_password = "admin"
   }
 }
