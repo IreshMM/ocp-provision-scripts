@@ -1,0 +1,12 @@
+---
+- hosts: ocp-svc
+  tasks:
+    - name: Upgrade all packages
+      yum:
+        name: '*'
+        state: latest
+
+    - name: Download ocp-installer
+      get_url: 
+        url: '{{ ocp_installer_url }}'
+        dest: /root
