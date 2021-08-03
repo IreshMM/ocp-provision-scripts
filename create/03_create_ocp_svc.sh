@@ -5,16 +5,19 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-vcd vapp network create-ovdc-network "$1" natnet
+VAPP_NAME="$1"
+NETWORK_NAME="${VAPP_NAME}-ocp.lan"
+
+vcd vapp network create-ovdc-network "$VAPP_NAME" routed-nat-net
 
 cd ../terraform/
 terraform workspace select default
 terraform workspace delete --force x
 terraform workspace new x
 terraform workspace select x
-TF_VAR_vapp="$1" terraform apply --auto-approve
+TF_VAR_vapp="$VAPP_NAME" terraform apply --auto-approve
 
-vcd vm add-nic --adapter-type VMXNET3 --primary --connect --network natnet --ip-address-mode DHCP "$1" ocp-svc
+vcd vm add-nic --adapter-type VMXNET3 --primary --connect --network routed-nat-net --ip-address-mode DHCP "$VAPP_NAME" "ocp-svc"
 
-vcd vm add-nic --adapter-type VMXNET3 --connect --network ocp.lan --ip-address-mode DHCP "$1" ocp-svc
+vcd vm add-nic --adapter-type VMXNET3 --connect --network "$NETWORK_NAME" --ip-address-mode DHCP "$VAPP_NAME" "ocp-svc"
 

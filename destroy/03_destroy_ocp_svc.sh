@@ -11,4 +11,4 @@ vcd vm undeploy "$1" ocp-svc
 
 vcd vm delete "$1" ocp-svc
 
-vcd vapp network delete "$1" natnet
+#vcd vapp network delete "$1" natnet
