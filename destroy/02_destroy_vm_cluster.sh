@@ -5,16 +5,20 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-vcd vapp delete -y -f "$1"
+VAPP_NAME="${1:-ocp4}"
+NETWORK_NAME="${VAPP_NAME}-ocp.lan"
 
-vcd network isolated delete -y ocp.lan
 
-vcd disk delete -y ocp-bootstrap-disk
+vcd vapp delete -y -f "$VAPP_NAME"
+
+vcd network isolated delete -y "$NETWORK_NAME"
+
+vcd disk delete -y ocp-bootstrap-disk-$VAPP_NAME
 
 for instance in {1..3}; do
-  vcd disk delete -y "ocp-cp-${instance}-disk"
+  vcd disk delete -y "ocp-cp-${instance}-disk-$VAPP_NAME"
 done
 
 for instance in {1..2}; do
-  vcd disk delete -y "ocp-w-${instance}-disk"
+  vcd disk delete -y "ocp-w-${instance}-disk-$VAPP_NAME"
 done

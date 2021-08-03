@@ -5,14 +5,19 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-vcd vapp create -d 'VM Cluster for OCP cluster' "$1"
+VAPP_NAME="$1" # Cluster name
+NETWORK_NAME="${VAPP_NAME}-ocp.lan"
+CATALOG="$2"
+ISO_NAME="$3"
+
+vcd vapp create -d 'VM Cluster for OCP cluster' "$VAPP_NAME"
 vcd network isolated create \
               -g 192.168.22.1 \
               -n 255.255.255.0 \
               --dhcp-disabled \
-              ocp.lan
+              "$NETWORK_NAME"
 
-vcd vapp network create-ovdc-network "$1" ocp.lan
+vcd vapp network create-ovdc-network "$VAPP_NAME" "$NETWORK_NAME"
 
 # $1 -> Cluster name
 # $2 -> VM name
@@ -30,9 +35,10 @@ vcd vapp add-vm-scratch -vm "$2"\
                         -deploy \
                         "$1"
 
-vcd disk create -s Standard "$2"-disk $((1024 ** 3 * $5))
+DISK_NAME="$2-disk-$VAPP_NAME"
+vcd disk create -s Standard "$DISK_NAME" $((1024 ** 3 * $5))
 
-vcd vapp attach "$1" "$2" "$2"-disk
+vcd vapp attach "$1" "$2" "$DISK_NAME"
 
 vcd vm insert-cd \
     --media-id `vcd -j catalog info $6 | jq -r '."template-id"'` \
@@ -41,21 +47,21 @@ vcd vm insert-cd \
 
 vcd vm add-nic \
             --adapter-type VMXNET3 \
-            --network ocp.lan \
+            --network "$NETWORK_NAME" \
             --primary \
             --connect \
             "$1" \
             "$2"
 }
 
-create_vm "$1" "ocp-bootstrap" 6 6 40 "iso rhcos.iso"
+create_vm "$VAPP_NAME" "ocp-bootstrap" 6 16 120 "$CATALOG $ISO_NAME"
 
 # Create control plane
 for instance in {1..3}; do
-  create_vm "$1" "ocp-cp-${instance}" 4 8 50 "iso rhcos.iso"
+  create_vm "$VAPP_NAME" "ocp-cp-${instance}" 4 16 120 "$CATALOG $ISO_NAME"
 done
 
 # Create compute nodes
 for instance in {1..2}; do
-  create_vm "$1" "ocp-w-${instance}" 4 8 50 "iso rhcos.iso"
+  create_vm "$VAPP_NAME" "ocp-w-${instance}" 4 8 120 "$CATALOG $ISO_NAME"
 done
