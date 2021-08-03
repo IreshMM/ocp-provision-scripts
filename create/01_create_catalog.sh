@@ -5,7 +5,11 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-wget -O rhcos.iso "$1"
+ISO_URL="$1"
+CATALOG="${2:-iso}"
+ISO_NAME="${3:-rhcos.iso}"
 
-vcd catalog create iso
-vcd catalog upload -p iso rhcos.iso
+wget -O "$ISO_NAME" "$ISO_URL"
+
+vcd catalog create "$CATALOG"
+vcd catalog upload -p "$CATALOG" "$ISO_NAME"
